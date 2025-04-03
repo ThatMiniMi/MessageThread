@@ -1,16 +1,20 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MessageList from './components/MessageList';
-import AddMessage from './components/AddMessage';
+import { useState } from "react";
+import Navbar from "./Components/Navbar";
+import MessageList from "./Components/MessageList";
+import AddMessage from "./Components/AddMessage";
 
-function App() {
+const App = () => {
+  const [refresh, setRefresh] = useState(false);
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<MessageList />} />
-        <Route path="/add" element={<AddMessage />} />
-      </Routes>
-    </Router>
+    <div>
+      <Navbar />
+      <div className="max-w-xl mx-auto p-4">
+        <AddMessage onMessageAdded={() => setRefresh((prev) => !prev)} />
+        <MessageList key={refresh} />
+      </div>
+    </div>
   );
-}
+};
 
 export default App;

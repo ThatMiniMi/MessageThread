@@ -1,31 +1,27 @@
-import { useState, useEffect } from 'react';
-import axiosInstance from '../axios';
+import { useEffect, useState } from "react";
+import axios from "../axios";
+import { Card, CardContent, Typography } from "@mui/material";
 
-function MessageList() {
+const MessageList = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    axiosInstance.get('/messages')
-      .then(response => {
-        setMessages(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the messages!", error);
-      });
+    axios.get("/messages").then((res) => {
+      setMessages(res.data);
+    });
   }, []);
 
   return (
-    <div>
-      <h1>Message Thread</h1>
-      <ul>
-        {messages.map(message => (
-          <li key={message.id}>
-            <strong>{message.userName}: </strong>{message.content}
-          </li>
-        ))}
-      </ul>
+    <div className="p-4 grid gap-4">
+      {messages.map((msg) => (
+        <Card key={msg.id} className="shadow-md">
+          <CardContent>
+            <Typography variant="body1">{msg.text}</Typography>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
-}
+};
 
 export default MessageList;

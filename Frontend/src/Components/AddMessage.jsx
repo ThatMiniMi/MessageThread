@@ -1,49 +1,33 @@
-import { useState } from 'react';
-import axiosInstance from '../axios';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import axios from "../axios";
+import { Button, TextField } from "@mui/material";
 
-function AddMessage() {
-  const [userName, setUserName] = useState('');
-  const [content, setContent] = useState('');
-  const navigate = useNavigate();
+const AddMessage = ({ onMessageAdded }) => {
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!message.trim()) return;
 
-    axiosInstance.post('/messages', { userName, content })
-      .then(response => {
-        navigate('/');
-      })
-      .catch(error => {
-        console.error("There was an error adding the message!", error);
-      });
+    await axios.post("/messages", { text: message });
+    setMessage("");
+    onMessageAdded();
   };
 
   return (
-    <div>
-      <h1>Add a New Message</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>User Name:</label>
-          <input
-            type="text"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Message:</label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="p-4 flex gap-4">
+      <TextField
+        fullWidth
+        label="Enter your message"
+        variant="outlined"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <Button type="submit" variant="contained">
+        Send
+      </Button>
+    </form>
   );
-}
+};
 
 export default AddMessage;
