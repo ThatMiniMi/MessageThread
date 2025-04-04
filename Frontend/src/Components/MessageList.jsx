@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "../axios";
-import { Card, CardContent, Typography } from "@mui/material";
+import MessageBubble from "./MessageBubble";
 
-const MessageList = () => {
+const MessageList = ({ currentUserId }) => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -12,13 +12,13 @@ const MessageList = () => {
   }, []);
 
   return (
-    <div className="p-4 grid gap-4">
+    <div className="p-4 space-y-4">
       {messages.map((msg) => (
-        <Card key={msg.id} className="shadow-md">
-          <CardContent>
-            <Typography variant="body1">{msg.text}</Typography>
-          </CardContent>
-        </Card>
+        <MessageBubble 
+          key={msg.id} 
+          message={msg} 
+          currentUserId={currentUserId} 
+        />
       ))}
     </div>
   );
