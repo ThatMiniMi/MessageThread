@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5215")
+        policy.WithOrigins("http://localhost:5173")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -35,6 +37,12 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    SeedDatabase(dbContext);
+}
+
 app.UseCors("AllowFrontend");
 
 if (app.Environment.IsDevelopment())
@@ -47,3 +55,23 @@ app.UseSession();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+static void SeedDatabase(AppDbContext dbContext)
+{
+    if (!dbContext.Users.Any())
+    {
+        dbContext.Users.AddRange(
+            new User
+            {
+                Username = "john_doe",
+                Password = "johnpassword"
+            },
+            new User
+            {
+                Username = "jane_doe",
+                Password = "janepassword"
+            }
+        );
+        dbContext.SaveChanges();
+    }
+}
