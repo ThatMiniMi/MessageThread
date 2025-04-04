@@ -1,25 +1,30 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import MessageBubble from "./MessageBubble";
 
-const MessageList = ({ currentUserId }) => {
+const MessageList = () => {
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    axios.get("/messages").then((res) => {
+  const fetchMessages = async () => {
+    try {
+      const res = await axios.get("http://localhost:5215/api/messages");
       setMessages(res.data);
-    });
-  }, []);
+    } catch (err) {
+      console.error("Error fetching messages:", err);
+    }
+  };
 
+  useEffect(() => {
+    fetchMessages();
+  }, []);
   return (
-    <div className="p-4 space-y-4">
-      {messages.map((msg) => (
-        <MessageBubble 
-          key={msg.id} 
-          message={msg} 
-          currentUserId={currentUserId} 
-        />
-      ))}
+    <div>
+      <h2>Messages</h2>
+      <div>
+        {messages.map((message) => (
+          <MessageBubble key={message.id} message={message} />
+        ))}
+      </div>
     </div>
   );
 };

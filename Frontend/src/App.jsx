@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navbar from "./Components/Navbar";
-import MessageThread from "./Components/MessageThread";
-import AddUser from "./Components/AddUser";
+import MessageList from "./Components/MessageList";
+import AddMessage from "./Components/AddMessage";
+import RegisterPage from "./Components/RegisterPage";
 import LoginPage from "./Components/LoginPage";
 
 const queryClient = new QueryClient();
@@ -11,19 +12,27 @@ const queryClient = new QueryClient();
 const App = () => {
   const [refresh, setRefresh] = useState(false);
 
-  const handleLogin = () => {
-    setRefresh((prev) => !prev);
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
         <Navbar />
         <div className="max-w-xl mx-auto p-4 space-y-8">
           <Routes>
-            <Route path="/register" element={<AddUser />} />
-            <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-            <Route path="/messages" element={<MessageThread />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/messages"
+              element={
+                localStorage.getItem("token") ? (
+                  <div>
+                    <AddMessage onMessageAdded={() => setRefresh((prev) => !prev)} />
+                    <MessageList key={refresh} />
+                  </div>
+                ) : (
+                  <LoginPage />
+                )
+              }
+            />
           </Routes>
         </div>
       </Router>
