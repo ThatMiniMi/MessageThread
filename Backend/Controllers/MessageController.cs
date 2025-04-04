@@ -1,90 +1,66 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Backend.Data;
 using Backend.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class MessageController : ControllerBase
+    [Route("api/[controller]")]
+    public class MessagesController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public MessageController(AppDbContext context)
+        public MessagesController(AppDbContext context)
         {
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Message>>> GetMessages()
+        [HttpGet("thread")]
+        public async Task<ActionResult<IEnumerable<Message>>> GetThreadMessages()
         {
-            return await _context.Messages.ToListAsync();
+            var messages = await _context.Messages
+                .Where(m => m.ReceiverId == null)
+                .OrderByDescending(m => m.SentAt)
+                .ToListAsync();
+
+            return Ok(messages);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Message>> GetMessage(int id)
+        [HttpGet("private/{userId}")]
+        public async Task<ActionResult<IEnumerable<Message>>> GetUserMessages(int userId)
         {
-            var message = await _context.Messages.FindAsync(id);
+            var messages = await _context.Messages
+                .Where(m => (m.SenderId == userId || m.ReceiverId == userId))
+                .OrderBy(m => m.SentAt)
+                .ToListAsync();
 
-            if (message == null)
-            {
-                return NotFound();
-            }
-            return message;
+            return Ok(messages);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Message>> PostMessage(Message message)
+        [HttpPost("thread")]
+        public async Task<ActionResult<Message>> PostThreadMessage(Message message)
         {
-            message.CreatedAt = DateTime.Now;
+            message.ReceiverId = null;
+
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetMessages), new { id = message.Id }, message);
+
+            return CreatedAtAction(nameof(GetThreadMessages), new { id = message.Id }, message);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMessage(int id, Message message)
+        [HttpPost("private")]
+        public async Task<ActionResult<Message>> PostPrivateMessage(Message message)
         {
-            if (id != message.Id)
+            if (message.ReceiverId == null)
             {
-                return BadRequest();
+                return BadRequest("ReceiverId is required for private messages.");
             }
 
-            _context.Entry(message).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Messages.Any(e => e.Id == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMessage(int id)
-        {
-            var message = await _context.Messages.FindAsync(id);
-            if (message == null)
-            {
-                return NotFound();
-            }
-
-            _context.Messages.Remove(message);
+            _context.Messages.Add(message);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return CreatedAtAction(nameof(GetUserMessages), new { userId = message.SenderId }, message);
         }
     }
 }
