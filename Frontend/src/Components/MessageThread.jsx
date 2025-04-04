@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "../axios";
+import axios from "axios";
 
 const MessageThread = () => {
   const [messages, setMessages] = useState([]);
@@ -16,8 +16,7 @@ const MessageThread = () => {
   const handleSendMessage = async () => {
     const newMessage = { text: message };
     await axios.post("/messages/thread", newMessage);
-    setMessage(""); // clear input after sending
-    // Re-fetch messages after posting a new one
+    setMessage("");
     const res = await axios.get("/messages/thread");
     setMessages(res.data);
   };

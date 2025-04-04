@@ -4,8 +4,6 @@ namespace Backend.Models
     {
         public int Id { get; set; }
         public string Username { get; set; } = string.Empty;
-        public string PasswordHash { get; set; } = null!;
-        public string PasswordSalt { get; set; } = null!;
+        public string Password { get; set; } = string.Empty;
     }
 }
-

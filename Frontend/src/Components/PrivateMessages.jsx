@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "../axios";
+import axios from "axios";
 
 const PrivateMessages = ({ userId }) => {
   const [messages, setMessages] = useState([]);
@@ -17,8 +17,7 @@ const PrivateMessages = ({ userId }) => {
   const handleSendMessage = async () => {
     const newMessage = { text: message, receiverId: receiverId, senderId: userId };
     await axios.post("/messages/private", newMessage);
-    setMessage(""); // clear input after sending
-    // Re-fetch messages after posting a new one
+    setMessage(""); 
     const res = await axios.get(`/messages/private/${userId}`);
     setMessages(res.data);
   };

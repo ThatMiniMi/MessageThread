@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navbar from "./Components/Navbar";
 import MessageList from "./Components/MessageList";
 import AddMessage from "./Components/AddMessage";
-import RegisterPage from "./Components/RegisterPage";
+import RegisterPage from "./Components/AddUser";
 import LoginPage from "./Components/LoginPage";
 import UserList from "./Components/UserList";
 
