@@ -18,16 +18,22 @@ const Navbar = ({ onSearchResults }) => {
   };
 
   return (
-    <AppBar position="static">
-      <Toolbar className="flex justify-between">
-        <Typography variant="h6">Message Thread</Typography>
-        <Box>
+    <AppBar
+      position="static"
+      className="bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-600 shadow-lg rounded-b-xl"
+    >
+      <Toolbar className="flex justify-between items-center p-4">
+        <Typography variant="h6" className="text-white font-semibold text-2xl">
+          Message Thread
+        </Typography>
+        <Box className="flex items-center">
           <TextField
             size="small"
             variant="outlined"
             placeholder="Search users..."
             value={search}
             onChange={handleSearch}
+            className="rounded-full p-2 bg-white text-black focus:outline-none focus:ring-2 focus:ring-yellow-300 transition-all duration-300"
           />
         </Box>
       </Toolbar>
