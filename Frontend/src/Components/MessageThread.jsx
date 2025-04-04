@@ -1,42 +1,36 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import AddMessage from "./AddMessage";
+import MessageBubble from "./MessageBubble";
 
 const MessageThread = () => {
   const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const res = await axios.get("/messages/thread");
-      setMessages(res.data);
+      try {
+        const res = await axios.get("/api/messages");
+        setMessages(res.data);
+      } catch (err) {
+        console.error("Error fetching messages:", err);
+      }
     };
+
     fetchMessages();
   }, []);
 
-  const handleSendMessage = async () => {
-    const newMessage = { text: message };
-    await axios.post("/messages/thread", newMessage);
-    setMessage("");
-    const res = await axios.get("/messages/thread");
-    setMessages(res.data);
-  };
-
   return (
     <div>
+      <h2>Message Thread</h2>
       <div>
         {messages.map((msg) => (
-          <div key={msg.id}>{msg.text}</div>
+          <MessageBubble key={msg.id} message={msg} />
         ))}
       </div>
-      <input
-        type="text"
-        placeholder="Write a message"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button onClick={handleSendMessage}>Send</button>
+      <AddMessage />
     </div>
   );
 };
 
 export default MessageThread;
+
