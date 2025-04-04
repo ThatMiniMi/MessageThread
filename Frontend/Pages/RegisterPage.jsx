@@ -10,12 +10,10 @@ const RegisterPage = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const navigate = useNavigate(); // Use this to redirect after successful registration
-
+  const navigate = useNavigate(); 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if all fields are filled
     if (!username || !email || !password) {
       setSnackbarMessage("All fields are required.");
       setSnackbarSeverity("error");
@@ -23,7 +21,6 @@ const RegisterPage = () => {
       return;
     }
 
-    // Send POST request to create the user
     try {
       const response = await axios.post("/users/register", {
         username,
@@ -34,8 +31,6 @@ const RegisterPage = () => {
       setSnackbarMessage("User registered successfully!");
       setSnackbarSeverity("success");
       setOpenSnackbar(true);
-
-      // Redirect to the login page after successful registration
       setTimeout(() => {
         navigate("/login");
       }, 2000);
@@ -86,7 +81,6 @@ const RegisterPage = () => {
         </Button>
       </form>
 
-      {/* Snackbar for success/error messages */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}

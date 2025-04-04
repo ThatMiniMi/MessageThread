@@ -14,7 +14,6 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if email and password are filled
     if (!email || !password) {
       setSnackbarMessage("Both email and password are required.");
       setSnackbarSeverity("error");
@@ -22,21 +21,17 @@ const LoginPage = () => {
       return;
     }
 
-    // Send POST request to log in the user
     try {
       const response = await axios.post("/users/login", {
         email,
         password,
       });
 
-      // Store the token in localStorage for later use
       localStorage.setItem("token", response.data.token);
 
       setSnackbarMessage("Login successful!");
       setSnackbarSeverity("success");
       setOpenSnackbar(true);
-
-      // Redirect to the message thread
       setTimeout(() => {
         navigate("/messages");
       }, 2000);
@@ -79,7 +74,6 @@ const LoginPage = () => {
         </Button>
       </form>
 
-      {/* Snackbar for success/error messages */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}

@@ -9,11 +9,9 @@ const AddUser = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if both fields are filled
     if (!username || !email) {
       setSnackbarMessage("Both username and email are required.");
       setSnackbarSeverity("error");
@@ -21,23 +19,19 @@ const AddUser = () => {
       return;
     }
 
-    // Send POST request to the backend to create a user
     try {
       const response = await axios.post("/users", {
         username,
         email,
       });
 
-      // If successful
       setSnackbarMessage("User created successfully!");
       setSnackbarSeverity("success");
-      setOpenSnackbar(true);
-      
-      // Reset the form
+      setOpenSnackbar(true);   
       setUsername("");
       setEmail("");
-    } catch (error) {
-      // If there's an error
+    } 
+    catch (error) {
       setSnackbarMessage("Error creating user. Please try again.");
       setSnackbarSeverity("error");
       setOpenSnackbar(true);
